@@ -2,62 +2,65 @@
 
 const inputElement = document.querySelector('.js-input');
 const buttonElement = document.querySelector('.js-button');
-const showContainer = document.querySelector('.js-show-container');
+const moviesContainer = document.querySelector('.js-show-container');
 const formElement = document.querySelector('.js-form');
 const favoriteContainer = document.querySelector('.js-favorite-container');
 
-let resultShows = [];
-let favoriteShows = [];
+let resultMovies = [];
+let favoriteMovies = [];
 
 //get data from api
 
-function searchSeries() {
+function searchMovies() {
   const userInput = inputElement.value.toUpperCase();
-  fetch('https://api.tvmaze.com/search/shows?q=' + userInput)
+  fetch(
+    'https://api.themoviedb.org/3/search/movie?api_key=a080d9fc2acc9d5bcc1ed3c2ce071049&query=' +
+      userInput
+  )
     .then((response) => response.json())
     .then((data) => {
-      resultShows = data;
-      paintShows();
+      resultMovies = data.results;
+      paintMovies();
     });
 }
 
 //paint search result
 
-function paintShows() {
+function paintMovies() {
   let htmlCode = '';
-  for (const shows of resultShows) {
-    const showName = shows.show.name.toUpperCase();
-    const showImage = shows.show.image;
-    const showID = shows.show.id;
+  for (const movies of resultMovies) {
+    const movieID = movies.id;
+    const movieName = movies.title.toUpperCase().substring(0, 50);
+    const movieDescription = movies.overview.substring(0, 200) + '...';
+    const movieImage = movies.poster_path;
     let isFavoriteClass;
-    if (isFavoriteShow(shows)) {
+    if (isFavoriteMovie(movies)) {
       isFavoriteClass = 'container__list--favorite';
     } else {
       isFavoriteClass = '';
     }
-    htmlCode += `<li class="container__list js-container ${isFavoriteClass}" id="${showID}">`;
+    htmlCode += `<li class="container__list js-container ${isFavoriteClass}" id="${movieID}">`;
     let source;
-    if (showImage === null) {
-      source = 'https://via.placeholder.com/210x295/ffffff/666666/?text=TV';
+    if (movieImage === null) {
+      source = 'https://via.placeholder.com/210x295/ffffff/666666/?text=Peli';
     } else {
-      source = `${showImage.original}`;
+      source =
+        'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/' + movieImage;
     }
-    htmlCode += `<img class="container__list--image" src="${source}" alt="poster of series" />`;
-    htmlCode += `<h2 class="container__list--title ${isFavoriteClass}">${showName}</h2>`;
-    htmlCode += `<h3 class="container__list--genre ${isFavoriteClass}">${shows.show.genres}</h3>`;
+    htmlCode += `<img class="container__list--image" src="${source}" alt="poster of pelis" />`;
+    htmlCode += `<h2 class="container__list--title ${isFavoriteClass}">${movieName}</h2>`;
+    htmlCode += `<h3 class="container__list--description ${isFavoriteClass}">${movieDescription}</h3>`;
     htmlCode += '</li>';
   }
-  showContainer.innerHTML = htmlCode;
+  moviesContainer.innerHTML = htmlCode;
   listenContainerElement();
 }
 
-//favorite show
+//favorite movies
 
-function isFavoriteShow(shows) {
-  const favoriteFound = favoriteShows.find(function (favoriteShow) {
-    const favShow = favoriteShow.show;
-    const show = shows.show;
-    return favShow.id === show.id;
+function isFavoriteMovie(movies) {
+  const favoriteFound = favoriteMovies.find(function (favoriteMovie) {
+    return favoriteMovie.id === movies.id;
   });
   if (favoriteFound === undefined) {
     return false;
@@ -66,7 +69,7 @@ function isFavoriteShow(shows) {
   }
 }
 
-buttonElement.addEventListener('click', searchSeries);
+buttonElement.addEventListener('click', searchMovies);
 
 //listen containerElements
 
@@ -75,32 +78,32 @@ function listenContainerElement() {
   const containerElements = document.querySelectorAll('.js-container');
   //to every containerElement add addEventListener
   for (const containerElement of containerElements) {
-    containerElement.addEventListener('click', handleShow);
+    containerElement.addEventListener('click', handleMovie);
   }
 }
 
-function handleShow(ev) {
-  const clickedShowId = parseInt(ev.currentTarget.id);
-
-  const favoritesFound = favoriteShows.find(function (favoriteShow) {
-    const favoriteShowId = favoriteShow.show.id;
-    return favoriteShowId === clickedShowId;
+function handleMovie(ev) {
+  const clickedmovieID = parseInt(ev.currentTarget.id);
+  const favoritesFound = favoriteMovies.find(function (favoriteMovie) {
+    const favoritemovieID = favoriteMovie.id;
+    return favoritemovieID === clickedmovieID;
   });
   if (favoritesFound === undefined) {
-    const showFound = resultShows.find(function (shows) {
-      const showId = shows.show.id;
-      return showId === clickedShowId;
+    const movieFound = resultMovies.find(function (movies) {
+      const movieID = movies.id;
+      return movieID === clickedmovieID;
     });
-    favoriteShows.push(showFound);
+    favoriteMovies.push(movieFound);
+    console.log(favoriteMovies);
   } else {
     //splice
-    const favFoundIndex = favoriteShows.findIndex(function (favoriteShow) {
-      const favoriteShowId = favoriteShow.show.id;
-      return favoriteShowId === clickedShowId;
+    const favFoundIndex = favoriteMovies.findIndex(function (favoriteMovie) {
+      const favoritemovieID = favoriteMovie.id;
+      return favoritemovieID === clickedmovieID;
     });
-    favoriteShows.splice(favFoundIndex, 1);
+    favoriteMovies.splice(favFoundIndex, 1);
   }
-  paintShows();
+  paintMovies();
   paintfavorites();
 }
 
@@ -109,22 +112,26 @@ function handleShow(ev) {
 function paintfavorites() {
   let htmlCode = '';
 
-  for (const favoriteShow of favoriteShows) {
-    const favShowName = favoriteShow.show.name;
-    const favshowImage = favoriteShow.show.image;
-    const favshowId = favoriteShow.show.id;
+  let topFive = favoriteMovies.slice(Math.max(favoriteMovies.length - 5, 1));
+
+  for (const favoriteMovie of topFive) {
+    const favmovieName = favoriteMovie.title.substring(0, 25);
+    const favmovieImage = favoriteMovie.poster_path;
+    const favmovieID = favoriteMovie.id;
+    const favmovieDescription =
+      favoriteMovie.overview.substring(0, 200) + '...';
     htmlCode += `<li class="favorites__list">`;
     let source;
-    if (favshowImage === null) {
-      source = 'https://via.placeholder.com/210x295/ffffff/666666/?text=TV';
+    if (favmovieImage === null) {
+      source = 'https://via.placeholder.com/210x295/ffffff/666666/?text=Peli';
     } else {
-      source = `${favshowImage.original}`;
+      source =
+        'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/' + favmovieImage;
     }
-    htmlCode += `<img class="favorites__list--image" src="${source}" alt="poster of favorite series" />`;
-
-    htmlCode += `<h4 class="favorites__list--title">${favShowName}</h4>`;
+    htmlCode += `<img class="favorites__list--image" src="${source}" alt="poster of favorite pelis"/>`;
+    htmlCode += `<h4 class="favorites__list--title">${favmovieName}</h4>`;
     htmlCode += '</li>';
-    htmlCode += `<div class="favorites__list--x js-x" id="${favshowId}">x`;
+    htmlCode += `<div class="favorites__list--x js-x" id="${favmovieID}">x`;
     htmlCode += `</div>`;
   }
   favoriteContainer.innerHTML = htmlCode;
@@ -143,30 +150,30 @@ formElement.addEventListener('submit', handleForm);
 //local storage
 
 function storeLocalStorage() {
-  const stringfavoriteShows = JSON.stringify(favoriteShows);
-  localStorage.setItem('favoriteShowsSaved', stringfavoriteShows);
+  const stringfavoriteMovies = JSON.stringify(favoriteMovies);
+  localStorage.setItem('favoriteMoviesSaved', stringfavoriteMovies);
 }
 
-function getLocalStorageShows() {
-  const localStorageShows = localStorage.getItem('favoriteShowsSaved');
-  if (localStorageShows !== null) {
-    const arrayShows = JSON.parse(localStorageShows);
-    favoriteShows = arrayShows;
+function getLocalStorageMovies() {
+  const localStorageMovies = localStorage.getItem('favoriteMoviesSaved');
+  if (localStorageMovies !== null) {
+    const arrayMovies = JSON.parse(localStorageMovies);
+    favoriteMovies = arrayMovies;
     paintfavorites();
   }
 }
 
-getLocalStorageShows();
+getLocalStorageMovies();
 
 //reset all
 
 const resetButton = document.querySelector('.js-reset-button');
 
 function resetAll() {
-  localStorage.removeItem('favoriteShowsSaved');
-  favoriteShows = [];
+  localStorage.removeItem('favoriteMoviesSaved');
+  favoriteMovies = [];
   paintfavorites();
-  paintShows();
+  paintMovies();
 }
 
 resetButton.addEventListener('click', resetAll);
@@ -175,15 +182,15 @@ resetButton.addEventListener('click', resetAll);
 
 function handleX(ev) {
   const xfavoriteElementId = parseInt(ev.currentTarget.id);
-  const favoriteX = favoriteShows.findIndex(function (favoriteShow) {
-    const favoriteShowId = favoriteShow.show.id;
-    return favoriteShowId === xfavoriteElementId;
+  const favoriteX = favoriteMovies.findIndex(function (favoriteMovie) {
+    const favoritemovieID = favoriteMovie.id;
+    return favoritemovieID === xfavoriteElementId;
   });
   if (favoriteX !== -1) {
     //splice
-    favoriteShows.splice(favoriteX, 1);
+    favoriteMovies.splice(favoriteX, 1);
     paintfavorites();
-    paintShows();
+    paintMovies();
   }
 }
 

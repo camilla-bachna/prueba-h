@@ -3,49 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Evaluacion final Módulo 2</title>
-    <link
-      href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
-      rel="stylesheet"
-    />
-    <script
-      src="https://kit.fontawesome.com/f2e0e49a34.js"
-      crossorigin="anonymous"
-    ></script>
+    <title>Adalab Web Starter Kit</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./assets/css/main.css" />
+    <link rel="icon" href="./assets/images/favicon.png" />
   </head>
 
   <body>
     <div class="page">
       <header class="page__header">
-        <i class="fas fa-search page__header--icon"></i>
-        <h1 class="page__header--title">Buscador de series</h1>
-        <i class="fas fa-tv page__header--icon"></i>
+        <img src="./assets/images/logo-adalab.png" alt="Adalab">
+        <h1>Bienvenidos a Adalab</h1>
       </header>
 
       <main class="page__main">
-        <div class="main__favorites">
-          <h3 class="main__favorites--title">Mis series favoritas:</h3>
-          <ul class="js-favorite-container favorites"></ul>
-          <button class="favorites__button js-reset-button">
-            <i class="far fa-trash-alt favorites__button--trash"></i>
-          </button>
-        </div>
-        <form class="js-form form">
-          <input
-            type="text"
-            name="search-field"
-            id="search-field"
-            class="js-input form__input"
-            placeholder="Busca aqui series"
-          />
-          <input type="button" value="Search" class="js-button form__button" />
-          <ul class="js-show-container container"></ul>
-        </form>
+        <h2>Este es el starter kit de Adalab</h2>
+        <p>Lo usamos para aprender:</p>
+        <ul class="main__list">
+          <li>Sass</li>
+          <li>HTML partials</li>
+          <li>Gulp</li>
+          <li>y muchas cosas más</li>
+        </ul>
+        <p>Si quieres saber cúales son las rutas correctas para:</p>
+        <ul class="main__list">
+          <li>
+            una <code class="code">&lt;img /&gt;</code> mira el fichero
+            <code class="code">./src/html/partials/header.html</code>.
+          </li>
+          <li>
+            y para un <code class="code">background-image</code> mira el fichero
+            <code class="code">./src/html/scss/layout/_page.scss</code>.
+          </li>
+        </ul>
+        <p>
+          Si quieres saber cómo usar un partial HTML dentro de otro partial, busca en la carperta
+          <code class="code">./src/html/index.html</code> y
+          <code class="code">./src/html/partials/main.html</code>, y verás cómo estamos creando estos
+          enlaces:
+        </p>
+        <ul class="main__list">
+          <li>
+            <a class="link__adalab" href="https://adalab.es">Adalab</a>
+
+          </li>
+          <li>
+            <a class="" href="./more-info.html">Más info del starter kit</a>
+
+          </li>
+        </ul>
       </main>
 
       <footer class="page__footer">
-        <small class="page__footer--small"> &copy; Buscador de series 2021 </small>
+        <small>
+          &copy; Todos los derechos reservados
+          <a class="link__adalab" href="https://adalab.es">Adalab</a>
+
+        </small>
       </footer>
 
     </div>
