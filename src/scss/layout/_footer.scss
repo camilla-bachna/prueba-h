@@ -1,0 +1,14 @@
+.page__footer {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  border-top: grey 1px solid;
+  color: rgb(23, 86, 118);
+  padding: 10px;
+  &--small {
+    background-color: white;
+  }
+}
